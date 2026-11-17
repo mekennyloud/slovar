@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" fill="#b4462f"/>
+  <text x="300" y="640" font-family="Georgia, 'Times New Roman', serif" font-size="440" font-weight="700" fill="#fffdf9" text-anchor="middle">A</text>
+  <text x="724" y="640" font-family="Georgia, 'Times New Roman', serif" font-size="440" font-weight="700" fill="#f6d8c9" text-anchor="middle">Я</text>
+  <rect x="262" y="738" width="500" height="22" rx="11" fill="#fffdf9" opacity=".55"/>
+</svg>
