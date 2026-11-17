@@ -17,6 +17,8 @@
 ## Как устроено
 
 - `index.html`, `style.css`, `app.js` — всё приложение, без сборки.
+- `ds/` — дизайн-система «Каракули»: токены, компоненты, котики, витрина `ds/index.html`. Правила — `ds/README.md`.
+- `fonts/` — Pangolin и Balsamiq Sans (OFL), лежат локально ради работы без сети.
 - `data/mueller.json` — словарь: `h` — слова, `b` — статьи, `abbr` — расшифровки помет.
 - `tools/build_dict.py` — пересобрать `data/mueller.json` (сам скачает пакеты Debian).
 - `sw.js` — кэш для работы без интернета. Поменяла файлы приложения — подними `APP`, пересобрала словарь — `DATA`.
@@ -24,6 +26,6 @@
 
 ## Команды
 
-- Посмотреть на Mac: `python3 -m http.server 8771` в папке → http://localhost:8771
+- Посмотреть на Mac: `python3 -m http.server 8771` в папке → http://localhost:8771 (на localhost кэш выключен, правки видны сразу)
 - Опубликовать: `zsh tools/publish.sh` → https://mekennyloud.github.io/slovar/
 - На iPhone: открыть адрес в Safari → «Поделиться» → «На экран „Домой“».

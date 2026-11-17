@@ -3,7 +3,19 @@
 // поиск идёт без интернета: по английскому слову — по началу слова, по русскому — по переводам.
 
 const $ = id => document.getElementById(id);
-const q = $('q'), list = $('list'), entry = $('entry'), status = $('status'), back = $('back'), clear = $('clear'), tip = $('tip');
+const q = $('q'), list = $('list'), entry = $('entry'), state = $('state'), back = $('back'), clear = $('clear'), tip = $('tip');
+
+// иконки и котики из дизайн-системы (ds/doodles.js)
+document.querySelectorAll('[data-d]').forEach(el => (el.innerHTML = DOODLES[el.dataset.d]));
+
+// пустой экран, загрузка, «не нашлось»: котик + надпись
+function showState(pic, title, text = '', extra = '', small = false) {
+  state.className = 'state' + (small ? ' state--small' : '');
+  state.innerHTML = `<div class="state__pic">${DOODLES[pic]}</div><div class="state__title">${title}</div>`
+    + (text ? `<div class="state__text">${text}</div>` : '') + extra;
+  state.hidden = false;
+}
+const BAR = '<div class="k-progress k-progress--run state__bar">' + '<i></i>'.repeat(12) + '</div>';
 
 let H = [], B = [], K = [], ABBR = {}, SOURCE = '';
 let plain = null;                       // переводы без ударений, строчными — для поиска по-русски
@@ -27,8 +39,9 @@ async function load() {
     route();
     if (!location.hash) search();
   } catch (e) {
-    status.innerHTML = 'Не получилось загрузить словарь. Нужен интернет при первом запуске. <button id="retry">Ещё раз</button>';
-    $('retry').onclick = () => { status.textContent = 'Загружаю словарь…'; load(); };
+    showState('sit', 'Не получилось загрузить словарь', 'В первый раз нужен интернет, дальше словарь живёт в телефоне.',
+      '<button class="k-btn k-btn--primary" id="retry">Ещё раз</button>');
+    $('retry').onclick = () => { showState('lie', 'Загружаю словарь…', '', BAR); load(); };
   }
 }
 
@@ -93,6 +106,8 @@ function similar(key) {
   return found.sort((a, b) => a[0] - b[0] || (K[b[1]][0] === key[0]) - (K[a[1]][0] === key[0]) || K[a[1]].length - K[b[1]].length).slice(0, 12).map(x => x[1]);
 }
 
+const MAYBE = 'Может быть:';
+
 function searchEn(raw) {
   const key = keyOf(raw);
   const hits = prefix(key, LIMIT);
@@ -104,7 +119,7 @@ function searchEn(raw) {
   if (hits.length) groups.push([null, hits]);
   if (!groups.length) {
     const sim = similar(key);
-    if (sim.length) groups.push(['Нет такого слова. Может быть:', sim]);
+    if (sim.length) groups.push([MAYBE, sim]);
   }
   return groups;
 }
@@ -147,11 +162,11 @@ function snippet(i, pos, len) {
   const t = B[i].replace(ACUTE, '');
   const s = Math.max(0, pos - 30);
   const tidy = x => esc(x.replace(/\[[^\]]*\]/g, '').replace(/(^|\n)(_[IVX]+|\d+[.)]|[а-я]\))\s*/g, ' ').replace(/_/g, '').replace(/\s+/g, ' '));
-  return (s ? '…' : '') + tidy(t.slice(s, pos)) + '<mark>' + esc(t.slice(pos, pos + len)) + '</mark>' + tidy(t.slice(pos + len, pos + len + 100));
+  return (s ? '…' : '') + tidy(t.slice(s, pos)) + '<mark class="k-mark">' + esc(t.slice(pos, pos + len)) + '</mark>' + tidy(t.slice(pos + len, pos + len + 100));
 }
 
 function item(i, html) {
-  return `<li><a href="#w=${encodeURIComponent(H[i])}" data-i="${i}"><span class="w">${esc(H[i])}</span><span class="p">${html}</span></a></li>`;
+  return `<li><a class="k-row" href="#w=${encodeURIComponent(H[i])}" data-i="${i}"><span class="w">${esc(H[i])}</span><span class="p">${html}</span></a></li>`;
 }
 
 let timer = 0;
@@ -162,7 +177,7 @@ function search() {
   if (!K.length) return;
   if (!raw.trim()) {
     list.innerHTML = '';
-    status.innerHTML = `<b>${H.length.toLocaleString('ru')}</b> статей · Мюллер, 7-е изд. Пишите слово по-английски или по-русски.`;
+    showState('loaf', 'Напиши слово по-английски или по-русски', `${H.length.toLocaleString('ru')} статей · словарь Мюллера`);
     return;
   }
   const ru = CYR.test(raw);
@@ -177,17 +192,19 @@ function showEn(raw) {
     html += ids.map(i => item(i, esc(preview(i)))).join('');
   }
   list.innerHTML = html;
-  status.textContent = groups.length ? '' : 'Ничего не нашлось.';
-  status.hidden = !!groups.length;
+  if (!groups.length) showState('sit', 'Такого слова нет', 'Проверь, как написано, или попробуй по-русски.');
+  else if (groups[0][0] === MAYBE) showState('sit', 'Такого слова нет', '', '', true);
+  else state.hidden = true;
 }
 
 function showRu(raw) {
   const found = searchRu(raw);
   const len = ruNorm(raw).trim().replace(/\s+/g, ' ').length;
-  list.innerHTML = found.slice(0, LIMIT).map(([, i, pos]) => item(i, snippet(i, pos, len))).join('');
-  status.hidden = false;
-  status.textContent = !found.length ? (len < 2 ? 'Ещё хотя бы одну букву.' : 'В переводах такого нет.')
-    : `В переводах: ${found.length.toLocaleString('ru')}${found.length > LIMIT ? `, показаны первые ${LIMIT}` : ''}`;
+  list.innerHTML = found.length ? `<li class="group">В переводах: ${found.length.toLocaleString('ru')}${found.length > LIMIT ? `, вот первые ${LIMIT}` : ''}</li>`
+    + found.slice(0, LIMIT).map(([, i, pos]) => item(i, snippet(i, pos, len))).join('') : '';
+  if (found.length) state.hidden = true;
+  else if (len < 2) showState('loaf', 'Ещё хотя бы одну букву', '', '', true);
+  else showState('sit', 'В переводах такого нет', 'Попробуй другое слово или начальную форму.');
 }
 
 // ---------- статья ----------
@@ -205,31 +222,32 @@ function inline(s) {
     out += esc(s.slice(last, m.index));
     last = m.index + m[0].length;
     const [, tr, hom, label, ref, ot, otWord, en] = m;
-    if (tr) out += `<span class="tr">${esc(tr)}</span>`;
-    else if (hom) out += `<span class="hom">${hom}</span>`;
+    if (tr) out += `<span class="k-ipa">${esc(tr)}</span>`;
+    else if (hom) out += `<span class="k-tag">${hom}</span>`;
     else if (label) {
       const full = ABBR[label] || ABBR[label + '.'];
-      out += full ? `<span class="lb k" data-k="${esc(full)}">${esc(label)}</span>` : `<span class="lb">${esc(label)}</span>`;
+      out += full ? `<button class="k-chip" data-k="${esc(full.replace(ACUTE, ''))}">${esc(label)}</button>` : `<span class="k-chip">${esc(label)}</span>`;
     } else if (ref !== undefined) {
       const r = ref.match(/^(см\.|ср\.)( тж\.)? ([A-Za-z].*)$/);
       out += '<span class="ref">(' + (r ? esc(r[1] + (r[2] || '') + ' ') + link(r[3].replace(/\s+\d+$/, ''), r[3]) : esc(ref)) + ')</span>';
     } else if (ot) out += 'от ' + link(otWord);
     else if (en) out += `<span class="en">${esc(en)}</span>`;
   }
-  return out + esc(s.slice(last));
+  // ударение рисуем штрихом (см. .k-st в ds/components.css)
+  return (out + esc(s.slice(last))).replace(/([А-яЁё])\u0301/g, '<span class="k-st">$1</span>');
 }
 
 function render(i) {
-  let html = `<h1>${esc(H[i])}</h1>`;
+  let html = `<h1 class="k-title">${esc(H[i])}</h1>`;
   for (const line of B[i].split('\n')) {
     let m, cls = 'ln', mark = '', rest = line;
-    if ((m = line.match(/^_([IVX]+)\s*(.*)$/))) { cls += ' l0'; mark = `<span class="hom">${m[1]}</span>`; rest = m[2]; }
-    else if ((m = line.match(/^(\d+)\.\s*(.*)$/))) { cls += ' l1'; mark = `<span class="n">${m[1]}.</span>`; rest = m[2]; }
+    if ((m = line.match(/^_([IVX]+)\s*(.*)$/))) { cls += ' l0'; mark = `<span class="k-tag k-tag--fill">${m[1]}</span>`; rest = m[2]; }
+    else if ((m = line.match(/^(\d+)\.\s*(.*)$/))) { cls += ' l1'; mark = `<span class="k-tag">${m[1]}</span>`; rest = m[2]; }
     else if ((m = line.match(/^(\d+)\)\s*(.*)$/))) { cls += ' l2'; mark = `<span class="n">${m[1]})</span>`; rest = m[2]; }
     else if ((m = line.match(/^([а-я])\)\s*(.*)$/))) { cls += ' l3'; mark = `<span class="n">${m[1]})</span>`; rest = m[2]; }
     html += `<div class="${cls}">${mark}${inline(rest)}</div>`;
   }
-  html += `<p class="src">${esc(SOURCE)}</p>`;
+  html += `<hr class="k-rule"><p class="src">${esc(SOURCE)}</p>`;
   entry.innerHTML = html;
 }
 
@@ -244,7 +262,7 @@ function route() {
     if (!opened) listScroll = scrollY;
     opened = true;
     render(i);
-    entry.hidden = false; list.hidden = true; status.hidden = true; back.hidden = false;
+    entry.hidden = false; list.hidden = true; state.hidden = true; back.hidden = false;
     scrollTo(0, 0);
   } else {
     const was = opened;
@@ -283,14 +301,17 @@ clear.onclick = () => { q.value = ''; if (opened) location.hash = ''; search(); 
 // расшифровка помет: _разг. → «разговорное»
 let tipTimer = 0;
 entry.addEventListener('click', e => {
-  const lb = e.target.closest('.lb.k');
+  const lb = e.target.closest('[data-k]');
   if (!lb) return;
-  tip.textContent = lb.textContent + ' — ' + lb.dataset.k;
-  tip.hidden = false;
+  tip.hidden = true;            // спрятать и показать заново, чтобы анимация сыграла ещё раз
+  tip.innerHTML = `<div class="k-say"><div class="k-say__who">${DOODLES.face}кот</div>`
+    + `<div class="k-say__text"><b>${esc(lb.textContent)}</b> — ${esc(lb.dataset.k)}</div></div>`;
+  requestAnimationFrame(() => (tip.hidden = false));
   clearTimeout(tipTimer);
   tipTimer = setTimeout(() => (tip.hidden = true), 3500);
 });
 tip.onclick = () => (tip.hidden = true);
 
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+// на Mac (localhost) кэш не включаем, чтобы правки были видны сразу
+if ('serviceWorker' in navigator && location.hostname !== 'localhost') navigator.serviceWorker.register('sw.js');
 load();

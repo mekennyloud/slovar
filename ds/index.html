@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Каракули — дизайн-система</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="components.css">
+  <style>
+    body { padding: 0 var(--gutter) 64px; max-width: 760px; margin: 0 auto; }
+    header { padding: 40px 0 8px; text-align: center; }
+    header .cats { display: flex; justify-content: center; align-items: flex-end; gap: 18px; margin-top: 18px; }
+    section { margin-top: 44px; }
+    section > .k-h2 { margin-bottom: 4px; }
+    section > p { margin: 0 0 16px; color: var(--ink-2); font-size: var(--fs-small); }
+    .row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+    .sw { border: var(--line) solid var(--ink); border-radius: var(--r-sketch-sm); overflow: hidden; background: var(--paper); }
+    .sw b { display: block; height: 54px; border-bottom: var(--line) solid var(--ink); }
+    .sw span { display: block; padding: 6px 8px 8px; font-size: var(--fs-caption); line-height: 1.35; }
+    .sw code { color: var(--ink-3); }
+    .type > div { padding: 10px 0; border-bottom: var(--line-thin) dashed var(--paper-4); }
+    .type small { display: block; color: var(--ink-3); font: var(--fs-caption) var(--font-body); }
+    header { position: relative; }
+    .theme { position: absolute; top: calc(env(safe-area-inset-top) + 10px); right: 0; min-height: 34px; font-size: 15px; }
+    .lines .k-card { width: 120px; height: 70px; display: grid; place-items: center; font-size: var(--fs-caption); color: var(--ink-2); }
+    .demo-dim { position: relative; padding: 26px 16px; background: var(--paper-4); border-radius: var(--r-sketch); }
+    .step { display: flex; align-items: center; gap: 10px; padding: 8px; background: var(--paper-3); border-radius: var(--r-sketch-sm); margin-top: 8px; }
+    .step .grow { flex: 1; }
+    .phone { width: 340px; max-width: 100%; border: var(--line-thick) solid var(--ink); border-radius: 34px 26px 32px 28px / 28px 32px 26px 34px; padding: 12px; background: var(--paper); }
+    .entry-demo .ln { margin: 6px 0; }
+    .entry-demo .n { font-family: var(--font-hand); font-weight: 400; margin-right: 6px; }
+    .entry-demo .en { font-weight: 700; }
+    code { font: 13px ui-monospace, Menlo, monospace; }
+    ul.rules { margin: 0; padding-left: 20px; color: var(--ink-2); }
+    ul.rules li { margin: 4px 0; }
+  </style>
+</head>
+<body class="k-base">
+  <header>
+    <button class="k-btn k-btn--quiet theme" id="theme">Тема</button>
+    <div class="k-display">Каракули</div>
+    <div class="k-muted k-hand">дизайн-система словаря</div>
+    <div class="cats" id="cats"></div>
+  </header>
+
+  <section>
+    <h2 class="k-h2">Как это устроено</h2>
+    <ul class="rules">
+      <li>Белая бумага и чёрная тушь. Всё, что можно нажать, обведено линией от руки.</li>
+      <li>Никаких теней и градиентов. Глубина — только серые плашки и затемнение.</li>
+      <li>Цвета мало: жёлтый — одно главное действие или найденное, голубой — процесс, рыжий и серый — котики.</li>
+      <li>Рукописный Pangolin — для слов, заголовков и кнопок. Эскизный Balsamiq Sans — для длинного текста, он читается легче.</li>
+      <li>Углы у каждой рамки разные, чтобы она выглядела нарисованной, а не начерченной.</li>
+      <li>Котики живут в пустых местах: пока ничего не ищешь, ничего не нашлось, идёт загрузка.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="k-h2">Цвета</h2>
+    <p>Токены в <code>tokens.css</code>. Ночью бумага становится грифельной доской, а тушь мелом.</p>
+    <div class="grid" id="colors"></div>
+  </section>
+
+  <section class="type">
+    <h2 class="k-h2">Шрифты</h2>
+    <p>Транскрипция идёт системным шрифтом: в рукописных нет знаков ə, ʃ, θ.</p>
+    <div><div class="k-display">Кот и cat</div><small>display · Pangolin 44</small></div>
+    <div><div class="k-title">water</div><small>title · Pangolin 36 · слово в статье</small></div>
+    <div><div class="k-h2">Похоже, это форма слова</div><small>h2 · Pangolin 22</small></div>
+    <div><div class="k-stress">вода́; <b>by water</b> во́дным путём; <i>разг.</i> водичка</div><small>body · Balsamiq Sans 17 · обычный, жирный, курсив</small></div>
+    <div><div class="k-ipa">[ˈwɔːtə]</div><small>транскрипция · системный</small></div>
+    <div><div class="k-caption">45 900 статей · Мюллер, 7-е изд.</div><small>caption · 13</small></div>
+    <div><div>Нашлось: <mark class="k-mark">собака</mark></div><small>маркер для найденного</small></div>
+  </section>
+
+  <section class="lines">
+    <h2 class="k-h2">Линии и углы</h2>
+    <p>Три толщины туши и «двойная линия», будто рамку обвели второй раз.</p>
+    <div class="row">
+      <div class="k-card" style="border-width:var(--line-thin)">тонкая 1.5</div>
+      <div class="k-card">обычная 2</div>
+      <div class="k-card" style="border-width:var(--line-thick)">толстая 3</div>
+      <div class="k-card" style="box-shadow:var(--double)">двойная</div>
+    </div>
+    <hr class="k-rule">
+    <p>Волнистая черта <code>.k-rule</code> вместо ровного разделителя.</p>
+  </section>
+
+  <section>
+    <h2 class="k-h2">Кнопки</h2>
+    <div class="row">
+      <button class="k-btn k-btn--primary">Найти</button>
+      <button class="k-btn">Назад к списку</button>
+      <button class="k-btn k-btn--quiet">Ещё раз</button>
+      <button class="k-btn" disabled>Закрыто</button>
+    </div>
+    <div class="row" style="margin-top:18px">
+      <button class="k-round"><span class="k-round__face" data-d="paw"></span>лапка</button>
+      <button class="k-round k-round--primary"><span class="k-round__face" style="font:18px var(--font-hand)">мяу</span>главное</button>
+      <button class="k-round k-round--sm"><span class="k-round__face" data-d="back"></span>назад</button>
+      <button class="k-round k-round--sm"><span class="k-round__face" data-d="close"></span>закрыть</button>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="k-h2">Поле поиска</h2>
+    <form class="k-field" onsubmit="return false">
+      <span class="k-field__icon" data-d="loupe"></span>
+      <input class="k-field__input" type="search" placeholder="Найти слово" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button type="button" class="k-field__clear" data-d="close" aria-label="Стереть"></button>
+    </form>
+  </section>
+
+  <section>
+    <h2 class="k-h2">Пометки и значки</h2>
+    <div class="row">
+      <span class="k-chip">разг.</span><span class="k-chip">ам.</span><span class="k-chip">n.</span><span class="k-chip k-chip--line">тех.</span>
+      <span class="k-tag">I</span><span class="k-tag">II</span><span class="k-tag k-tag--fill">3</span>
+      <span class="k-meter"><span class="k-tag">2</span><span class="k-meter__track"><span class="k-meter__fill" style="width:22%"></span></span>19/100</span>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="k-h2">Пузыри и реплики</h2>
+    <div class="row" style="gap:28px">
+      <span class="k-bubble">…</span>
+      <span class="k-bubble k-bubble--white">мяу?</span>
+    </div>
+    <div style="margin-top:26px;max-width:420px">
+      <div class="k-say"><div class="k-say__who"><span data-d="face"></span>кот</div><div class="k-say__text"><b>разг.</b> — разговорное слово или выражение</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="k-h2">Прогресс</h2>
+    <div class="k-window k-window--app" style="max-width:520px">
+      <div class="k-window__bar"><span class="k-dots"><i></i><i></i><i></i></span>Загрузка</div>
+      <div class="k-window__body">
+        <div class="k-progress k-progress--run" id="prog"></div>
+        <div class="row" style="justify-content:space-between;margin-top:10px">
+          <span class="k-hand k-small">Загружаю словарь… около 3 МБ</span>
+          <button class="k-btn k-btn--quiet" style="min-height:32px;font-size:15px">отмена</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="k-h2">Окно и карточки</h2>
+    <div class="demo-dim">
+      <div class="k-window" style="max-width:440px;margin:0 auto">
+        <div class="k-window__bar">Котик</div>
+        <div class="k-window__body">
+          <div class="row" style="align-items:flex-start">
+            <div class="k-card" style="padding:8px 14px;text-align:center"><div class="k-caption">обычный</div><span data-d="sit"></span><div class="k-hand k-small">уровень 1</div></div>
+            <div style="flex:1;min-width:150px" class="k-small">Любит спать на солнце и ловить слова. Больше всего любит слово <b>cat</b>.</div>
+          </div>
+          <div class="step"><span class="k-tag">1</span><span class="grow">Греться на солнце</span><button class="k-btn" style="min-height:34px">✓ сейчас</button></div>
+          <div class="step"><span class="k-tag">2</span><span class="grow">Залезть на крышу</span><button class="k-btn k-btn--primary" style="min-height:34px">учить</button></div>
+          <div class="step"><span class="k-tag">3</span><span class="grow k-muted">???</span><button class="k-btn" disabled style="min-height:34px">закрыто</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="k-h2">Список</h2>
+    <ul class="k-list">
+      <li><a class="k-row" href="#"><b>water</b> <span class="k-muted k-small">вода; by water водным путём…</span></a></li>
+      <li><a class="k-row" href="#"><b>watch</b> <span class="k-muted k-small">часы (карманные, наручные)…</span></a></li>
+      <li><a class="k-row" href="#"><b>watchdog</b> <span class="k-muted k-small">сторожевой пёс…</span></a></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="k-h2">Котики</h2>
+    <p>Свои рисунки в духе референсов. Хвост тихо покачивается, кроме режима «уменьшить движение». <code>DOODLES.loaf / sit / lie / face / paw</code>.</p>
+    <div class="row" style="gap:28px;align-items:flex-end" id="zoo"></div>
+  </section>
+
+  <section>
+    <h2 class="k-h2">Всё вместе: статья</h2>
+    <div class="phone">
+      <form class="k-field" onsubmit="return false" style="margin-bottom:14px">
+        <span class="k-field__icon" data-d="loupe"></span>
+        <input class="k-field__input" value="water" readonly>
+      </form>
+      <div class="k-title">water</div>
+      <div class="k-ipa">[ˈwɔːtə]</div>
+      <div class="entry-demo k-stress">
+        <div class="ln"><span class="k-tag">1</span> <span class="k-chip">n.</span></div>
+        <div class="ln"><span class="n">1)</span>вода́; <span class="en">by water</span> во́дным путём; <span class="en">to hold water</span> <span class="k-chip">разг.</span> не пропуска́ть во́ду</div>
+        <div class="ln"><span class="n">2)</span>водоём</div>
+        <div class="ln"><span class="n">3)</span>(часто <span class="k-chip">pl.</span>) во́ды; мо́ре</div>
+      </div>
+    </div>
+  </section>
+
+  <script src="doodles.js"></script>
+  <script>
+    document.querySelectorAll('.k-stress').forEach(el => el.innerHTML = el.innerHTML.replace(/([а-яё])\u0301/gi, '<span class="k-st">$1</span>'));
+    document.querySelectorAll('[data-d]').forEach(el => el.innerHTML = DOODLES[el.dataset.d]);
+    $ = id => document.getElementById(id);
+    $('cats').innerHTML = DOODLES.sit + DOODLES.lie + DOODLES.loaf;
+    $('zoo').innerHTML = ['loaf', 'sit', 'lie', 'face', 'paw'].map(k => `<div style="text-align:center">${DOODLES[k]}<div class="k-caption">${k}</div></div>`).join('');
+    $('prog').innerHTML = '<i></i>'.repeat(14);
+    const colors = [['paper', 'фон'], ['paper-2', 'плашка'], ['paper-3', 'карточка, пометка'], ['paper-4', 'выключено'],
+      ['ink', 'тушь, текст'], ['ink-2', 'второй текст'], ['ink-3', 'подсказка'], ['frame', 'шапка окна'],
+      ['yellow', 'главное, маркер'], ['blue', 'процесс'], ['red', 'шкала, опасное'], ['ginger', 'рыжий котик'], ['cat-gray', 'серый котик']];
+    const paint = () => $('colors').innerHTML = colors.map(([n, what]) =>
+      `<div class="sw"><b style="background:var(--${n})"></b><span>${what}<br><code>--${n}</code> <code>${getComputedStyle(document.documentElement).getPropertyValue('--' + n).trim()}</code></span></div>`).join('');
+    paint();
+    $('theme').onclick = () => {
+      const root = document.documentElement, dark = matchMedia('(prefers-color-scheme: dark)').matches;
+      const cur = root.dataset.theme || (dark ? 'dark' : 'light');
+      root.dataset.theme = cur === 'dark' ? 'light' : 'dark';
+      paint();
+    };
+  </script>
+</body>
+</html>

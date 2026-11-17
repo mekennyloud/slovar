@@ -1,0 +1,113 @@
+/* Дизайн-система «Каракули» — токены.
+   Стиль: рисунок тушью на белой бумаге. Чёрный контур от руки, серые плашки,
+   жёлтый маркер для главного действия, немного голубого и рыжего (котики). */
+
+@font-face { font-family: 'Pangolin'; font-style: normal; font-weight: 400; font-display: swap;
+  src: url(../fonts/Pangolin-400-cyrillic.woff2) format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: 'Pangolin'; font-style: normal; font-weight: 400; font-display: swap;
+  src: url(../fonts/Pangolin-400-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Balsamiq Sans'; font-style: normal; font-weight: 400; font-display: swap;
+  src: url(../fonts/BalsamiqSans-400-cyrillic.woff2) format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: 'Balsamiq Sans'; font-style: normal; font-weight: 400; font-display: swap;
+  src: url(../fonts/BalsamiqSans-400-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Balsamiq Sans'; font-style: normal; font-weight: 700; font-display: swap;
+  src: url(../fonts/BalsamiqSans-700-cyrillic.woff2) format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: 'Balsamiq Sans'; font-style: normal; font-weight: 700; font-display: swap;
+  src: url(../fonts/BalsamiqSans-700-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Balsamiq Sans'; font-style: italic; font-weight: 400; font-display: swap;
+  src: url(../fonts/BalsamiqSans-400i-cyrillic.woff2) format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: 'Balsamiq Sans'; font-style: italic; font-weight: 400; font-display: swap;
+  src: url(../fonts/BalsamiqSans-400i-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+:root {
+  color-scheme: light;
+
+  /* бумага */
+  --paper: #ffffff;          /* фон экрана */
+  --paper-2: #f4f4f1;        /* мягкая плашка: строка при нажатии, фон поля */
+  --paper-3: #e7e7e3;        /* серая карточка внутри окна, пометки */
+  --paper-4: #d2d2ce;        /* выключенное, затемнение под окном */
+
+  /* тушь */
+  --ink: #232323;            /* контуры и основной текст */
+  --ink-2: #4d4d4b;          /* второстепенный текст */
+  --ink-3: #8f8f8b;          /* подсказки, плейсхолдеры */
+  --frame: #5c5c59;          /* шапка окна */
+  --on-frame: #ffffff;
+
+  /* цвет — понемногу */
+  --yellow: #fff07a;         /* главное действие, маркер, пузырь «…» */
+  --yellow-2: #f3d73a;
+  --on-yellow: #232323;      /* на жёлтом всегда тёмная тушь, в любой теме */
+  --blue: #6cb8e8;           /* прогресс, ссылки-подсказки */
+  --blue-soft: #dceffb;
+  --red: #e8584f;            /* опасное, «пусто» на шкале */
+  --ginger: #e9a148;         /* рыжий котик */
+  --cat-gray: #a7a7a3;       /* серый котик */
+  --cat-white: #ffffff;
+  --cat-ink: #232323;         /* глаза, полоски, пятна котиков — всегда тёмные */
+
+  /* шрифты */
+  --font-hand: 'Pangolin', 'Balsamiq Sans', 'Comic Sans MS', -apple-system, sans-serif;  /* заголовки, слова, кнопки */
+  --font-body: 'Balsamiq Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; /* текст статей */
+  --font-ipa: 'Charis SIL', 'Doulos SIL', 'Lucida Grande', -apple-system, sans-serif;     /* транскрипция: в рукописных нет ə ʃ θ */
+
+  --fs-display: 44px;        /* заставка */
+  --fs-title: 36px;          /* слово в статье */
+  --fs-h2: 22px;
+  --fs-body: 17px;           /* меньше 16 нельзя: iPhone увеличивает страницу при вводе */
+  --fs-small: 15px;
+  --fs-caption: 13px;
+  --lh-body: 1.5;
+
+  /* линии */
+  --line: 2px;               /* обычный контур */
+  --line-thick: 3px;         /* окна, круглые кнопки */
+  --line-thin: 1.5px;        /* разделители */
+  /* углы «от руки»: у каждого угла свой радиус */
+  --r-sketch: 14px 5px 12px 6px / 6px 12px 5px 14px;
+  --r-sketch-sm: 8px 3px 7px 4px / 4px 7px 3px 8px;
+  --r-sketch-lg: 22px 8px 20px 10px / 10px 20px 8px 22px;
+  --r-blob: 48% 52% 50% 50% / 52% 48% 52% 48%;   /* круглая кнопка, чуть кривая */
+  --r-pill: 999px;
+
+  /* отступы, шаг 4 */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+  --gutter: 16px;
+
+  /* «двойная линия»: второй штрих чуть сдвинут, как будто обвели дважды */
+  --double: 1px 1.5px 0 -0.5px var(--ink);
+
+  --dim: rgba(35, 35, 35, .38);   /* затемнение под окном */
+  --ease: cubic-bezier(.3, 1.4, .5, 1);   /* лёгкий «пружинный» отскок */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    /* ночью — мел на грифельной доске */
+    --paper: #1c1c1a;
+    --paper-2: #252523;
+    --paper-3: #30302d;
+    --paper-4: #45453f;
+    --ink: #efede6;
+    --ink-2: #c4c2bb;
+    --ink-3: #87857e;
+    --frame: #3a3a36;
+    --on-frame: #efede6;
+    --yellow: #f5e66a;
+    --yellow-2: #e0c93a;
+    --blue: #7cc3ef;
+    --blue-soft: #23384a;
+    --cat-gray: #8d8d88;
+    --cat-white: #f4f2ea;
+    --dim: rgba(0, 0, 0, .55);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #1c1c1a; --paper-2: #252523; --paper-3: #30302d; --paper-4: #45453f;
+  --ink: #efede6; --ink-2: #c4c2bb; --ink-3: #87857e; --frame: #3a3a36; --on-frame: #efede6;
+  --yellow: #f5e66a; --yellow-2: #e0c93a; --blue: #7cc3ef; --blue-soft: #23384a;
+  --cat-gray: #8d8d88; --cat-white: #f4f2ea; --dim: rgba(0, 0, 0, .55);
+}

@@ -1,0 +1,210 @@
+/* Дизайн-система «Каракули» — компоненты. Нужен tokens.css.
+   Правило одно: всё, что можно потрогать, обведено тушью; всё остальное — плоское, без теней. */
+
+/* ---------- основа ---------- */
+.k-base, .k-base * { box-sizing: border-box; }
+.k-base {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: var(--fs-body)/var(--lh-body) var(--font-body);
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+/* :where — чтобы сброс кнопок не перебивал .k-btn и другие компоненты */
+:where(.k-base) :where(button) { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+.k-base [hidden] { display: none !important; }
+
+/* ---------- текст ---------- */
+.k-display { font: var(--fs-display)/1.15 var(--font-hand); letter-spacing: .01em; }
+.k-title   { font: var(--fs-title)/1.1 var(--font-hand); letter-spacing: .01em; margin: 0; }
+.k-h2      { font: var(--fs-h2)/1.25 var(--font-hand); margin: 0; }
+.k-hand    { font-family: var(--font-hand); }
+.k-muted   { color: var(--ink-3); }
+.k-small   { font-size: var(--fs-small); }
+.k-caption { font-size: var(--fs-caption); color: var(--ink-3); }
+/* маркер: днём — полоска по низу букв, ночью — заливка целиком, иначе верх тёмных букв тонет в фоне */
+.k-mark    { background: linear-gradient(transparent 45%, var(--yellow) 45%, var(--yellow) 88%, transparent 88%); color: inherit; padding: 0 1px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .k-mark { background: var(--yellow); color: var(--on-yellow); border-radius: 3px; } }
+:root[data-theme="dark"] .k-mark { background: var(--yellow); color: var(--on-yellow); border-radius: 3px; }
+.k-ipa     { font-family: var(--font-ipa); color: var(--ink-2); }
+
+/* ударение: штрих тушью над гласной. Знак U+0301 в Balsamiq съезжает, поэтому рисуем сами:
+   вода́ → во<span class="k-st">а</span> */
+.k-st { position: relative; }
+.k-st::after {
+  content: ''; position: absolute; left: 50%; top: .02em;
+  width: .1em; height: .3em; border-radius: .05em;
+  background: currentColor; transform: translateX(-20%) rotate(32deg);
+}
+
+/* ---------- кнопки ---------- */
+.k-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--s2);
+  min-height: 44px; padding: 0 var(--s4);
+  border: var(--line) solid var(--ink); border-radius: var(--r-sketch);
+  background: var(--paper); color: var(--ink);
+  font: var(--fs-body)/1 var(--font-hand);
+  box-shadow: var(--double);
+  transition: transform .12s var(--ease), background-color .15s;
+}
+.k-btn:active { transform: translate(1px, 1.5px); box-shadow: none; }
+.k-btn--primary { background: var(--yellow); color: var(--on-yellow); border-color: var(--ink); }
+.k-btn--quiet { background: var(--paper-3); }
+.k-btn:disabled, .k-btn[aria-disabled="true"] { background: var(--paper-3); color: var(--ink-3); border-color: var(--ink-3); box-shadow: none; cursor: default; }
+.k-btn svg { flex: none; }
+
+/* круглая кнопка с подписью снизу, как «магазин» и «домик» */
+.k-round { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; font: var(--fs-caption)/1 var(--font-hand); }
+.k-round__face {
+  width: 52px; height: 52px; display: grid; place-items: center;
+  border: var(--line-thick) solid var(--ink); border-radius: var(--r-blob);
+  background: var(--paper);
+  transition: transform .12s var(--ease);
+}
+.k-round--sm .k-round__face { width: 40px; height: 40px; border-width: var(--line); }
+.k-round--primary .k-round__face { background: var(--yellow); color: var(--on-yellow); }
+.k-round:active .k-round__face { transform: scale(.94) rotate(-3deg); }
+
+/* ---------- поле ввода ---------- */
+.k-field { position: relative; display: flex; align-items: center; }
+.k-field__icon { position: absolute; left: 12px; color: var(--ink); pointer-events: none; }
+.k-field__input {
+  width: 100%; height: 46px;
+  padding: 0 42px 0 42px;
+  border: var(--line) solid var(--ink); border-radius: var(--r-sketch);
+  background: var(--paper); color: var(--ink);
+  font: var(--fs-body) var(--font-hand);
+  outline: none; -webkit-appearance: none; appearance: none;
+  box-shadow: var(--double);
+}
+.k-field__input::placeholder { color: var(--ink-3); }
+.k-field__input:focus { background: var(--paper-2); }
+.k-field__input::-webkit-search-cancel-button, .k-field__input::-webkit-search-decoration { -webkit-appearance: none; }
+.k-field__clear { position: absolute; right: 10px; width: 28px; height: 28px; display: grid; place-items: center; color: var(--ink); }
+
+/* ---------- карточки и окна ---------- */
+.k-card { border: var(--line) solid var(--ink); border-radius: var(--r-sketch); background: var(--paper); padding: var(--s4); }
+.k-card--gray { background: var(--paper-3); border-color: transparent; border-radius: var(--r-sketch-sm); }
+
+/* окно с тёмной шапкой (как карточка котика) */
+.k-window { border: var(--line-thick) solid var(--ink); border-radius: var(--r-sketch-lg); background: var(--paper); overflow: hidden; }
+.k-window__bar {
+  display: flex; align-items: center; justify-content: center; gap: var(--s2);
+  min-height: 44px; padding: var(--s2) var(--s4);
+  background: var(--frame); color: var(--on-frame);
+  border-bottom: var(--line-thick) solid var(--ink);
+  font: var(--fs-h2)/1 var(--font-hand);
+}
+.k-window__body { padding: var(--s4); }
+
+/* окно «браузера» с тремя точками */
+.k-window--app .k-window__bar { justify-content: flex-start; background: var(--paper-3); color: var(--ink); font-size: var(--fs-small); border-bottom-width: var(--line); min-height: 34px; }
+.k-dots { display: inline-flex; gap: 6px; margin-right: var(--s2); }
+.k-dots i { width: 9px; height: 9px; border: var(--line) solid var(--ink); border-radius: 50%; background: var(--paper); }
+
+/* ---------- пометки, плашки, значки ---------- */
+.k-chip {
+  display: inline-block; padding: 0 7px; line-height: 1.45;
+  border-radius: var(--r-sketch-sm); background: var(--paper-3); color: var(--ink-2);
+  font: italic .84em/1.45 var(--font-body); white-space: nowrap; vertical-align: .06em;
+}
+button.k-chip { font: italic .84em/1.45 var(--font-body); color: var(--ink-2); background: var(--paper-3); }
+.k-chip--line { background: transparent; border: var(--line-thin) solid var(--ink-3); }
+
+/* квадратик с номером: уровень, «1 шаг», омоним I/II */
+.k-tag {
+  display: inline-grid; place-items: center; min-width: 30px; height: 28px; padding: 0 6px;
+  border: var(--line) solid var(--ink); border-radius: var(--r-sketch-sm);
+  background: var(--paper); font: 16px/1 var(--font-hand); color: var(--ink);
+}
+.k-tag--fill { background: var(--ink); color: var(--paper); }
+
+/* ---------- пузыри ---------- */
+.k-bubble {
+  position: relative; display: inline-block; padding: 6px 14px;
+  border: var(--line) solid var(--ink); border-radius: var(--r-pill);
+  background: var(--yellow); color: var(--on-yellow); font: var(--fs-body)/1.2 var(--font-hand);
+}
+.k-bubble::after {          /* хвостик */
+  content: ''; position: absolute; left: 22px; bottom: -8px; width: 12px; height: 12px;
+  background: inherit; border: inherit; border-width: 0 var(--line) var(--line) 0; border-radius: 0 0 4px 0;
+  transform: rotate(45deg) skew(8deg, 8deg);
+}
+.k-bubble--white { background: var(--paper); color: var(--ink); }
+
+/* реплика: двойная рамка, слева котик-аватар (как «мяу» в игре) */
+.k-say {
+  display: flex; align-items: center; gap: var(--s3);
+  padding: var(--s2) var(--s3);
+  border: var(--line) solid var(--ink); border-radius: var(--r-sketch-sm);
+  background: var(--paper); color: var(--ink);
+  outline: var(--line-thick) solid var(--ink); outline-offset: 3px;
+}
+.k-say__who { flex: none; display: flex; flex-direction: column; align-items: center; font: var(--fs-caption)/1 var(--font-hand); color: var(--ink-2); gap: 2px; }
+.k-say__who svg { width: 34px; height: 34px; }
+.k-say__text { font: var(--fs-small)/1.35 var(--font-body); }
+
+/* ---------- прогресс: синие «кирпичики» ---------- */
+.k-progress {
+  display: flex; gap: 3px; padding: 4px;
+  border: var(--line) solid var(--ink); border-radius: var(--r-sketch-sm); background: var(--paper);
+  height: 22px; overflow: hidden;
+}
+.k-progress i { flex: 1; border: var(--line-thin) solid var(--ink); border-radius: 3px; background: var(--blue); min-width: 6px; }
+.k-progress--run i { animation: k-blink 1.4s steps(1) infinite; }
+.k-progress--run i:nth-child(4n+2) { animation-delay: .35s; }
+.k-progress--run i:nth-child(4n+3) { animation-delay: .7s; }
+.k-progress--run i:nth-child(4n+4) { animation-delay: 1.05s; }
+@keyframes k-blink { 0%, 100% { background: var(--blue); } 50% { background: var(--paper); } }
+
+/* шкала-полоска (здоровье, сытость) */
+.k-meter { display: inline-flex; align-items: center; gap: var(--s2); font: var(--fs-small)/1 var(--font-hand); }
+.k-meter__track { position: relative; width: 110px; height: 14px; border: var(--line) solid var(--ink); border-radius: var(--r-sketch-sm); background: var(--paper); overflow: hidden; }
+.k-meter__fill { position: absolute; inset: 0 auto 0 0; background: var(--red); border-right: var(--line) solid var(--ink); }
+
+/* ---------- списки и линии ---------- */
+.k-list { list-style: none; margin: 0; padding: 0; }
+.k-row {
+  display: block; padding: 12px 4px; color: inherit; text-decoration: none;
+  border-bottom: var(--line-thin) dashed var(--paper-4);
+}
+.k-row:active { background: var(--paper-2); }
+
+/* линия «от руки»: кривая волна вместо ровной черты */
+.k-rule {
+  height: 8px; border: 0; margin: var(--s4) 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='8' viewBox='0 0 120 8'%3E%3Cpath d='M0 4 C 12 2, 26 6.2, 40 4.2 S 68 2.2, 84 4.4 S 108 5.6, 120 4' fill='none' stroke='%23232323' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x center / 120px 8px;
+  opacity: .9;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .k-rule { filter: invert(1); }
+}
+:root[data-theme="dark"] .k-rule { filter: invert(1); }
+
+/* ---------- всплывающая подсказка снизу ---------- */
+.k-toast {
+  position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 20px);
+  transform: translateX(-50%); width: min(92vw, 480px); z-index: 10;
+  animation: k-pop .25s var(--ease);
+}
+@keyframes k-pop { from { transform: translate(-50%, 12px) scale(.96); opacity: 0; } }
+
+/* ---------- котики ---------- */
+.k-doodle { display: block; overflow: visible; }
+.k-doodle .ink { stroke: var(--ink); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.k-doodle .fill-paper { fill: var(--cat-white); }
+.k-doodle .fill-gray { fill: var(--cat-gray); }
+.k-doodle .fill-ginger { fill: var(--ginger); }
+.k-doodle .fill-ink { fill: var(--ink); }
+/* черты мордочки и пятна — своя тушь, тёмная в любой теме, иначе ночью глаза пропадут на белой шерсти */
+.k-doodle .feat { stroke: var(--cat-ink); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.k-doodle .fill-cat { fill: var(--cat-ink); }
+.k-doodle .tail { transform-origin: var(--tail-x, 50%) var(--tail-y, 50%); animation: k-wag 2.6s ease-in-out infinite; }
+.k-doodle .zzz { font: 14px var(--font-hand); fill: var(--ink-3); animation: k-float 3s ease-in-out infinite; }
+@keyframes k-wag { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-9deg); } }
+@keyframes k-float { 0%, 100% { transform: translateY(0); opacity: .9; } 50% { transform: translateY(-4px); opacity: .5; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .k-doodle .tail, .k-doodle .zzz, .k-progress--run i, .k-toast { animation: none; }
+}

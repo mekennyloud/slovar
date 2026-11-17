@@ -1,8 +1,13 @@
 // Кэширует приложение и словарь, чтобы всё открывалось без интернета.
 // Изменил файлы приложения — подними APP. Пересобрал словарь — подними DATA.
-const APP = 'slovar-app-v1';
+const APP = 'slovar-app-v2';
 const DATA = 'slovar-data-v1';
 const APP_FILES = ['./', 'index.html', 'style.css', 'app.js', 'manifest.webmanifest',
+  'ds/tokens.css', 'ds/components.css', 'ds/doodles.js',
+  'fonts/Pangolin-400-latin.woff2', 'fonts/Pangolin-400-cyrillic.woff2',
+  'fonts/BalsamiqSans-400-latin.woff2', 'fonts/BalsamiqSans-400-cyrillic.woff2',
+  'fonts/BalsamiqSans-700-latin.woff2', 'fonts/BalsamiqSans-700-cyrillic.woff2',
+  'fonts/BalsamiqSans-400i-latin.woff2', 'fonts/BalsamiqSans-400i-cyrillic.woff2',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 const DATA_FILES = ['data/mueller.json'];
 

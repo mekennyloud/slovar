@@ -1,6 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-  <rect width="1024" height="1024" fill="#b4462f"/>
-  <text x="300" y="640" font-family="Georgia, 'Times New Roman', serif" font-size="440" font-weight="700" fill="#fffdf9" text-anchor="middle">A</text>
-  <text x="724" y="640" font-family="Georgia, 'Times New Roman', serif" font-size="440" font-weight="700" fill="#f6d8c9" text-anchor="middle">Я</text>
-  <rect x="262" y="738" width="500" height="22" rx="11" fill="#fffdf9" opacity=".55"/>
+  <!-- Иконка в стиле «Каракули»: буквы A и Я от руки, жёлтый маркер, котик выглядывает снизу -->
+  <rect width="1024" height="1024" fill="#ffffff"/>
+  <g transform="translate(0 -78)">
+  <path d="M170 548 C 330 532, 560 566, 860 540" fill="none" stroke="#fff07a" stroke-width="96" stroke-linecap="round"/>
+  <g fill="none" stroke="#232323" stroke-width="34" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M196 632 C 240 520, 286 398, 334 268 C 380 398, 426 520, 470 634"/>
+    <path d="M254 496 C 304 488, 360 502, 414 492"/>
+    <path d="M818 270 C 814 392, 822 516, 816 636"/>
+    <path d="M816 276 C 730 266, 654 272, 620 326 C 592 378, 626 446, 712 452 C 752 454, 786 452, 816 450"/>
+    <path d="M714 454 C 672 516, 632 578, 590 638"/>
+  </g>
+  <path d="M150 720 C 300 706, 420 734, 540 718 S 780 706, 874 722" fill="none" stroke="#232323" stroke-width="16" stroke-linecap="round"/>
+  <g transform="translate(368 742) scale(6)" stroke="#232323" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke-width="2.6" fill="#fff" d="M7 18 L6 3 L18 10 Z M30 10 L42 3 L41 18 Z"/>
+    <path stroke-width="2.6" fill="#fff" d="M5 24 C5 13 13 8 24 8 C35 8 43 13 43 24 C43 34 35 40 24 40 C13 40 5 34 5 24 Z"/>
+    <path stroke="none" fill="#e9a148" d="M7 17 L6.5 5 L16 10.5 C12 12 9 14 7 17Z"/>
+    <circle stroke="none" cx="17" cy="24" r="2.3" fill="#232323"/><circle stroke="none" cx="31" cy="24" r="2.3" fill="#232323"/>
+    <path stroke-width="2.2" fill="none" d="M22 29 l2 2 l2 -2 M24 31 q-2 2.5 -4 1 M24 31 q2 2.5 4 1"/>
+  </g>
+  </g>
 </svg>

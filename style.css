@@ -1,111 +1,60 @@
-:root {
-  --bg: #f6f3ee;
-  --card: #fffdf9;
-  --ink: #1d1c1a;
-  --muted: #8a8378;
-  --line: #e6e0d6;
-  --field: #ebe6dd;
-  --accent: #b4462f;
-  --en: #1d1c1a;
-  --ru: #44403a;
-  --sel: #efe9df;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #16171a;
-    --card: #1e1f23;
-    --ink: #ecebe8;
-    --muted: #8d8c88;
-    --line: #2c2d32;
-    --field: #26272c;
-    --accent: #f08a6c;
-    --en: #f4f3f0;
-    --ru: #c9c7c2;
-    --sel: #25262b;
-  }
-}
+/* Раскладка словаря. Цвета, шрифты и компоненты — из дизайн-системы «Каракули» (ds/). */
 
-* { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--ink);
-  font: 17px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
-  -webkit-tap-highlight-color: transparent;
-  min-height: 100dvh;
-}
-button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
-[hidden] { display: none !important; }
+body { min-height: 100dvh; }
 
-/* Поиск сверху */
+/* поиск сверху */
 .bar {
   position: sticky; top: 0; z-index: 2;
-  display: flex; align-items: center; gap: 4px;
-  padding: calc(env(safe-area-inset-top) + 10px) max(16px, env(safe-area-inset-right)) 10px max(16px, env(safe-area-inset-left));
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  -webkit-backdrop-filter: saturate(1.4) blur(14px);
-  backdrop-filter: saturate(1.4) blur(14px);
-  border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; gap: var(--s2);
+  padding: calc(env(safe-area-inset-top) + 10px) max(var(--gutter), env(safe-area-inset-right)) 12px max(var(--gutter), env(safe-area-inset-left));
+  background: var(--paper);
 }
-.back { width: 36px; height: 40px; margin-left: -8px; display: grid; place-items: center; color: var(--accent); flex: none; }
-.search { position: relative; flex: 1; display: flex; align-items: center; }
-.loupe { position: absolute; left: 11px; color: var(--muted); pointer-events: none; }
-#q {
-  width: 100%; height: 42px;
-  padding: 0 38px 0 36px;
-  border: 0; border-radius: 12px;
-  background: var(--field); color: var(--ink);
-  font: inherit; font-size: 17px;       /* меньше 16px — iPhone приближает страницу при фокусе */
-  outline: none; -webkit-appearance: none; appearance: none;
+.bar::after {                 /* волнистая черта тушью под шапкой */
+  content: ''; position: absolute; left: 0; right: 0; bottom: -4px; height: 8px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='8' viewBox='0 0 120 8'%3E%3Cpath d='M0 4 C 12 2, 26 6.2, 40 4.2 S 68 2.2, 84 4.4 S 108 5.6, 120 4' fill='none' stroke='%23232323' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x center / 120px 8px;
 }
-#q::placeholder { color: var(--muted); }
-#q::-webkit-search-cancel-button, #q::-webkit-search-decoration { -webkit-appearance: none; }
-.clear { position: absolute; right: 10px; color: var(--muted); display: grid; place-items: center; width: 24px; height: 24px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .bar::after { filter: invert(1); } }
+.search { flex: 1; }
+.back { flex: none; }
 
-main { padding: 0 max(16px, env(safe-area-inset-right)) calc(env(safe-area-inset-bottom) + 32px) max(16px, env(safe-area-inset-left)); max-width: 720px; margin: 0 auto; }
-
-.status { color: var(--muted); font-size: 15px; margin: 18px 2px; }
-.status b { color: var(--ink); font-weight: 600; }
-.status button { color: var(--accent); font-weight: 600; }
-
-/* Список найденного */
-.list { list-style: none; margin: 0; padding: 0; }
-.list li { border-bottom: 1px solid var(--line); }
-.list a {
-  display: block; padding: 11px 2px; text-decoration: none; color: inherit;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+main {
+  max-width: 720px; margin: 0 auto;
+  padding: 6px max(var(--gutter), env(safe-area-inset-right)) calc(env(safe-area-inset-bottom) + 40px) max(var(--gutter), env(safe-area-inset-left));
 }
-.list a:active { background: var(--sel); }
-.list .w { font-weight: 600; color: var(--en); }
-.list .p { color: var(--muted); margin-left: 8px; font-size: 15px; }
-.list mark { background: none; color: var(--accent); }
-.group { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 20px 2px 4px; }
 
-/* Статья */
+/* пустой экран, загрузка, «не нашлось» — с котиком */
+.state { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 56px 12px 8px; gap: 10px; }
+.state__pic .k-doodle { width: auto; height: auto; transform: scale(1.25); margin-bottom: 14px; }
+.state__title { font: var(--fs-h2)/1.3 var(--font-hand); max-width: 300px; }
+.state__text { color: var(--ink-3); font-size: var(--fs-small); max-width: 300px; }
+.state__bar { width: min(240px, 80%); margin-top: 6px; }
+.state .k-btn { margin-top: 8px; }
+.state--small { padding-top: 22px; }
+.state--small .state__pic .k-doodle { transform: none; margin-bottom: 4px; }
+
+/* список найденного */
+.list .k-row { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.list .w { font: 20px/1.3 var(--font-hand); color: var(--ink); }
+.list .p { color: var(--ink-3); margin-left: 8px; font-size: var(--fs-small); }
+.group { font: 18px/1.3 var(--font-hand); color: var(--ink-2); margin: 18px 2px 2px; }
+.group:first-child { margin-top: 8px; }
+
+/* статья */
 .entry { padding-top: 14px; }
-.entry h1 { font-size: 30px; line-height: 1.15; margin: 4px 0 2px; font-weight: 700; letter-spacing: -.01em; overflow-wrap: anywhere; }
-.entry .tr { color: var(--muted); font-size: 16px; }
-.entry .ln { margin: 6px 0; color: var(--ru); overflow-wrap: break-word; }
-.entry .ln.l0 { margin-top: 18px; }
-.entry .ln.l1 { margin-top: 14px; }
-.entry .ln.l2 { padding-left: 32px; text-indent: -32px; }
-.entry .ln.l3 { padding-left: 58px; text-indent: -26px; }
-.entry .ln.l3 .n { min-width: 26px; }
-.entry .ln.l1 + .ln.l2, .entry .ln.l0 + .ln.l1 { margin-top: 6px; }
-.entry .n { display: inline-block; min-width: 32px; padding-right: 6px; text-indent: 0; color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; }
-.entry .ln.l1 .n, .entry .ln.l0 .n { min-width: 0; margin-right: 8px; }
-.entry .hom { font-size: 13px; font-weight: 700; color: var(--accent); border: 1.5px solid currentColor; border-radius: 6px; padding: 0 6px; margin-right: 8px; }
-.entry .en { color: var(--en); font-weight: 600; }
-.entry .lb { color: var(--muted); font-style: italic; font-size: .92em; }
-.entry .lb.k { text-decoration: underline dotted; text-underline-offset: 3px; cursor: help; }
-.entry .ref { color: var(--muted); font-size: .92em; }
-.entry a.go { color: var(--accent); text-decoration: none; font-weight: 600; }
-.entry .src { margin-top: 36px; font-size: 13px; color: var(--muted); }
-
-.tip {
-  position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 20px); transform: translateX(-50%);
-  max-width: min(92vw, 520px); padding: 10px 14px; border-radius: 12px;
-  background: var(--ink); color: var(--bg); font-size: 15px; box-shadow: 0 6px 24px rgba(0,0,0,.18);
-  z-index: 5;
-}
+.entry .k-title { overflow-wrap: anywhere; }
+.entry .ipa { display: inline-block; margin: 2px 0 0; }
+.entry .ln { margin: 6px 0; overflow-wrap: break-word; }
+.entry .ln.l0 { margin-top: 22px; }
+.entry .ln.l1 { margin-top: 18px; }
+.entry .ln.l0 + .ln.l1, .entry .ln.l1 + .ln.l2 { margin-top: 8px; }
+.entry .ln.l2 { padding-left: 34px; text-indent: -34px; }
+.entry .ln.l3 { padding-left: 60px; text-indent: -26px; }
+.entry .n { display: inline-block; min-width: 34px; text-indent: 0; font: 19px/1 var(--font-hand); color: var(--ink); }
+.entry .ln.l3 .n { min-width: 26px; color: var(--ink-2); }
+.entry .ln > .k-tag { margin-right: 6px; text-indent: 0; }
+.entry .en { font-weight: 700; }
+.entry button.k-chip { cursor: help; }
+.entry .ref { color: var(--ink-3); font-size: .94em; }
+.entry a.go { color: inherit; font-weight: 700; text-decoration: underline wavy var(--blue); text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
+.entry .k-rule { margin-top: 32px; }
+.entry .src { font-size: var(--fs-caption); color: var(--ink-3); margin: 0; }
