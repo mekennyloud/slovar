@@ -15,7 +15,8 @@ body { min-height: 100dvh; }
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .bar::after { filter: invert(1); } }
 .search { flex: 1; }
-.back { flex: none; }
+.back, .favs { flex: none; }
+.favs .k-doodle { width: 22px; height: 22px; }
 
 main {
   max-width: 720px; margin: 0 auto;
@@ -38,9 +39,12 @@ main {
 .list .p { color: var(--ink-3); margin-left: 8px; font-size: var(--fs-small); }
 .group { font: 18px/1.3 var(--font-hand); color: var(--ink-2); margin: 18px 2px 2px; }
 .group:first-child { margin-top: 8px; }
+.group--big { font-size: var(--fs-h2); color: var(--ink); }
 
 /* статья */
 .entry { padding-top: 14px; }
+.entry__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s2); }
+.entry__head .k-star { margin: -2px -8px 0 0; }
 .entry .k-title { overflow-wrap: anywhere; }
 .entry .ipa { display: inline-block; margin: 2px 0 0; }
 .entry .ln { margin: 6px 0; overflow-wrap: break-word; }

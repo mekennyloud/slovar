@@ -1,6 +1,6 @@
 // Кэширует приложение и словарь, чтобы всё открывалось без интернета.
 // Изменил файлы приложения — подними APP. Пересобрал словарь — подними DATA.
-const APP = 'slovar-app-v2';
+const APP = 'slovar-app-v3';
 const DATA = 'slovar-data-v1';
 const APP_FILES = ['./', 'index.html', 'style.css', 'app.js', 'manifest.webmanifest',
   'ds/tokens.css', 'ds/components.css', 'ds/doodles.js',

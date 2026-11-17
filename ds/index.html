@@ -100,6 +100,9 @@
       <button class="k-round k-round--primary"><span class="k-round__face" style="font:18px var(--font-hand)">мяу</span>главное</button>
       <button class="k-round k-round--sm"><span class="k-round__face" data-d="back"></span>назад</button>
       <button class="k-round k-round--sm"><span class="k-round__face" data-d="close"></span>закрыть</button>
+      <button class="k-round k-round--sm"><span class="k-round__face" data-d="star"></span>избранное</button>
+      <button class="k-star" aria-pressed="false" data-d="star" onclick="this.setAttribute('aria-pressed', this.getAttribute('aria-pressed') !== 'true'); this.classList.remove('k-pop'); void this.offsetWidth; this.classList.add('k-pop')"></button>
+      <button class="k-star" aria-pressed="true" data-d="star"></button>
     </div>
   </section>
 
@@ -203,7 +206,7 @@
     document.querySelectorAll('[data-d]').forEach(el => el.innerHTML = DOODLES[el.dataset.d]);
     $ = id => document.getElementById(id);
     $('cats').innerHTML = DOODLES.sit + DOODLES.lie + DOODLES.loaf;
-    $('zoo').innerHTML = ['loaf', 'sit', 'lie', 'face', 'paw'].map(k => `<div style="text-align:center">${DOODLES[k]}<div class="k-caption">${k}</div></div>`).join('');
+    $('zoo').innerHTML = ['loaf', 'sit', 'lie', 'face', 'paw', 'star'].map(k => `<div style="text-align:center">${DOODLES[k]}<div class="k-caption">${k}</div></div>`).join('');
     $('prog').innerHTML = '<i></i>'.repeat(14);
     const colors = [['paper', 'фон'], ['paper-2', 'плашка'], ['paper-3', 'карточка, пометка'], ['paper-4', 'выключено'],
       ['ink', 'тушь, текст'], ['ink-2', 'второй текст'], ['ink-3', 'подсказка'], ['frame', 'шапка окна'],

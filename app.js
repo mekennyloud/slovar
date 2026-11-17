@@ -3,7 +3,7 @@
 // поиск идёт без интернета: по английскому слову — по началу слова, по русскому — по переводам.
 
 const $ = id => document.getElementById(id);
-const q = $('q'), list = $('list'), entry = $('entry'), state = $('state'), back = $('back'), clear = $('clear'), tip = $('tip');
+const q = $('q'), list = $('list'), entry = $('entry'), state = $('state'), back = $('back'), clear = $('clear'), tip = $('tip'), favBtn = $('favs');
 
 // иконки и котики из дизайн-системы (ds/doodles.js)
 document.querySelectorAll('[data-d]').forEach(el => (el.innerHTML = DOODLES[el.dataset.d]));
@@ -26,6 +26,32 @@ const CYR = /[а-яё]/i;
 const keyOf = s => s.toLowerCase().replace(/’/g, "'").replace(/^['-]+/, '').replace(/\s+/g, ' ').trim();
 const ruNorm = s => s.toLowerCase().replace(ACUTE, '').replace(/ё/g, 'е');
 const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// ---------- избранное: живёт только на этом телефоне ----------
+// у Kokoro и плеера тот же адрес сайта, поэтому ключ с приставкой slovar:
+const FAV_KEY = 'slovar:fav';
+let FAV = [];                           // [{ w: слово, t: когда добавлено }], новые сверху
+try { FAV = JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch { FAV = []; }
+// просим браузер не чистить хранилище само (на iPhone с экрана «Домой» и так не чистит)
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+
+const isFav = w => FAV.some(f => f.w === w);
+function toggleFav(w) {
+  FAV = isFav(w) ? FAV.filter(f => f.w !== w) : [{ w, t: Date.now() }, ...FAV];
+  try { localStorage.setItem(FAV_KEY, JSON.stringify(FAV)); } catch { say('Не получилось сохранить: на телефоне нет места?'); }
+  return isFav(w);
+}
+
+function showFav() {
+  const ids = FAV.map(f => find(f.w)).filter(i => i >= 0);
+  if (!ids.length) {
+    list.innerHTML = '';
+    showState('lie', 'В избранном пока пусто', 'Открой слово и нажми звёздочку рядом с ним.');
+    return;
+  }
+  state.hidden = true;
+  list.innerHTML = `<li class="group group--big">Избранное · ${ids.length}</li>` + ids.map(i => item(i, esc(preview(i)))).join('');
+}
 
 // ---------- загрузка ----------
 
@@ -238,7 +264,9 @@ function inline(s) {
 }
 
 function render(i) {
-  let html = `<h1 class="k-title">${esc(H[i])}</h1>`;
+  const on = isFav(H[i]);
+  let html = `<div class="entry__head"><h1 class="k-title">${esc(H[i])}</h1>`
+    + `<button class="k-star" id="star" data-w="${esc(H[i])}" aria-pressed="${on}" aria-label="${on ? 'Убрать из избранного' : 'В избранное'}">${DOODLES.star}</button></div>`;
   for (const line of B[i].split('\n')) {
     let m, cls = 'ln', mark = '', rest = line;
     if ((m = line.match(/^_([IVX]+)\s*(.*)$/))) { cls += ' l0'; mark = `<span class="k-tag k-tag--fill">${m[1]}</span>`; rest = m[2]; }
@@ -251,39 +279,47 @@ function render(i) {
   entry.innerHTML = html;
 }
 
-// ---------- навигация: #w=слово — статья, пусто — поиск ----------
+// ---------- навигация: #w=слово — статья, #fav — избранное, пусто — поиск ----------
 
-let listScroll = 0, opened = false;
+let listScroll = 0, view = 'search';
+
+function setView(v) {
+  view = v;
+  entry.hidden = v !== 'entry';
+  list.hidden = v === 'entry';
+  back.hidden = v === 'search';
+  favBtn.classList.toggle('k-round--primary', v === 'fav');
+}
 
 function route() {
+  if (!K.length) return;
+  const was = view;
   const m = location.hash.match(/^#w=(.*)$/);
-  const i = m && K.length ? find(decodeURIComponent(m[1])) : -1;
+  const i = m ? find(decodeURIComponent(m[1])) : -1;
   if (i >= 0) {
-    if (!opened) listScroll = scrollY;
-    opened = true;
+    if (was !== 'entry') listScroll = scrollY;
+    setView('entry');
     render(i);
-    entry.hidden = false; list.hidden = true; state.hidden = true; back.hidden = false;
+    state.hidden = true;
     scrollTo(0, 0);
-  } else {
-    const was = opened;
-    opened = false;
-    entry.hidden = true; list.hidden = false; back.hidden = true;
-    if (!K.length) return;
-    search();
-    if (was) requestAnimationFrame(() => scrollTo(0, listScroll));
+    return;
   }
+  if (location.hash === '#fav') { setView('fav'); showFav(); }
+  else { setView('search'); search(); }
+  requestAnimationFrame(() => scrollTo(0, was === 'entry' ? listScroll : 0));
 }
 
 addEventListener('hashchange', route);
 
-back.onclick = () => {
-  if (history.length > 1 && history.state !== 'first') history.back();
+const goBack = () => {
+  if (history.length > 1) history.back();
   else location.hash = '';
 };
+back.onclick = goBack;
+favBtn.onclick = () => (view === 'fav' ? goBack() : (location.hash = 'fav'));
 
 q.addEventListener('input', () => {
-  if (opened) history.replaceState(null, '', location.pathname + location.search);
-  if (opened) { opened = false; entry.hidden = true; list.hidden = false; back.hidden = true; }
+  if (view !== 'search') { history.replaceState(null, '', location.pathname + location.search); setView('search'); }
   search();
 });
 
@@ -296,21 +332,32 @@ $('form').addEventListener('submit', e => {
   if (first) location.hash = 'w=' + encodeURIComponent(H[+first.dataset.i]);
 });
 
-clear.onclick = () => { q.value = ''; if (opened) location.hash = ''; search(); q.focus(); };
+clear.onclick = () => { q.value = ''; if (view !== 'search') location.hash = ''; search(); q.focus(); };
 
-// расшифровка помет: _разг. → «разговорное»
+// реплика котика снизу: расшифровка помет, «добавила в избранное»
 let tipTimer = 0;
-entry.addEventListener('click', e => {
-  const lb = e.target.closest('[data-k]');
-  if (!lb) return;
+function say(html, ms = 3500) {
   tip.hidden = true;            // спрятать и показать заново, чтобы анимация сыграла ещё раз
-  tip.innerHTML = `<div class="k-say"><div class="k-say__who">${DOODLES.face}кот</div>`
-    + `<div class="k-say__text"><b>${esc(lb.textContent)}</b> — ${esc(lb.dataset.k)}</div></div>`;
+  tip.innerHTML = `<div class="k-say"><div class="k-say__who">${DOODLES.face}кот</div><div class="k-say__text">${html}</div></div>`;
   requestAnimationFrame(() => (tip.hidden = false));
   clearTimeout(tipTimer);
-  tipTimer = setTimeout(() => (tip.hidden = true), 3500);
-});
+  tipTimer = setTimeout(() => (tip.hidden = true), ms);
+}
 tip.onclick = () => (tip.hidden = true);
+
+entry.addEventListener('click', e => {
+  const star = e.target.closest('#star');
+  if (star) {
+    const on = toggleFav(star.dataset.w);
+    star.setAttribute('aria-pressed', on);
+    star.setAttribute('aria-label', on ? 'Убрать из избранного' : 'В избранное');
+    star.classList.remove('k-pop'); void star.offsetWidth; star.classList.add('k-pop');
+    say(on ? `<b>${esc(star.dataset.w)}</b> теперь в избранном` : `Убрала <b>${esc(star.dataset.w)}</b> из избранного`, 2000);
+    return;
+  }
+  const lb = e.target.closest('[data-k]');
+  if (lb) say(`<b>${esc(lb.textContent)}</b> — ${esc(lb.dataset.k)}`);
+});
 
 // на Mac (localhost) кэш не включаем, чтобы правки были видны сразу
 if ('serviceWorker' in navigator && location.hostname !== 'localhost') navigator.serviceWorker.register('sw.js');
